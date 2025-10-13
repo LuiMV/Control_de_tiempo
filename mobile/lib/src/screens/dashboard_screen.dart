@@ -1,52 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/api.dart';
-import '../providers/api_provider.dart';
+import '../providers/session_provider.dart';
 
-class DashboardScreen extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<DashboardScreen> createState() => _DashboardScreenState();
-}
-
-class _DashboardScreenState extends ConsumerState<DashboardScreen> {
-  Map<String, dynamic>? summary;
-  bool loading = false;
-
-  void loadSummary() async {
-    setState(() => loading = true);
-    final api = ref.read(apiProvider);
-    try {
-      final res = await api.usageSummary('daily');
-      setState(() => summary = res.data);
-    } catch (e) {
-      // manejar error
-    } finally {
-      setState(() => loading = false);
-    }
-  }
+class DashboardScreen extends ConsumerWidget {
+  const DashboardScreen({super.key});
 
   @override
-  void initState() {
-    super.initState();
-    Future.microtask(() => loadSummary());
-  }
-
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
-      appBar: AppBar(title: Text('Resumen')),
-      body: loading
-        ? Center(child: CircularProgressIndicator())
-        : summary == null
-          ? Center(child: Text('No hay datos'))
-          : Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                children: [
-                  Text('Total segundos hoy: ${summary!['total_seconds'] ?? 0}'),
-                ],
-              ),
-            ),
+      appBar: AppBar(
+        title: const Text('Panel principal'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            onPressed: () => ref.read(sessionProvider.notifier).logout(),
+          ),
+        ],
+      ),
+      body: const Center(child: Text('Bienvenido a tu app de control')),
     );
   }
 }
