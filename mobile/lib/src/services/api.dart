@@ -2,7 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class ApiService {
-  final Dio _dio = Dio(BaseOptions(baseUrl: 'https://unodoriferously-needy-noelle.ngrok-free.dev:8000/api/'));
+  final Dio _dio = Dio(BaseOptions(baseUrl: 'http://127.0.0.1:8000/api/'));
   final FlutterSecureStorage storage = const FlutterSecureStorage();
 
   ApiService() {
@@ -19,7 +19,7 @@ class ApiService {
     );
   }
 
-  ///  Iniciar sesión y guardar tokens
+  //  Iniciar sesión y guardar tokens
   Future<bool> login(String email, String password) async {
     try {
       final response = await _dio.post(
@@ -80,5 +80,14 @@ class ApiService {
     final token = await storage.read(key: 'access_token');
     return token != null;
   }
+
+
+  Future<Response> setAppLimit(String appName, int limitMinutes) {
+    return _dio.post('set_limit/', data: {
+      'app_name': appName,
+      'limit_minutes': limitMinutes,
+    });
+  }
+
 }
 
